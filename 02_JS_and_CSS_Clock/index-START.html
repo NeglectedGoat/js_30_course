@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JS + CSS Clock</title>
+</head>
+<body>
+
+
+    <div class="clock">
+      <div class="clock-face">
+        <div class="hand hour-hand"></div>
+        <div class="hand min-hand"></div>
+        <div class="hand second-hand"></div>
+      </div>
+    </div>
+
+
+  <style>
+    html {
+      background:#018DED url(http://unsplash.it/1500/1000?image=881&blur=50);
+      background-size:cover;
+      font-family:'helvetica neue';
+      text-align: center;
+      font-size: 10px;
+    }
+
+    body {
+      margin: 0;
+      font-size: 2rem;
+      display:flex;
+      flex:1;
+      min-height: 100vh;
+      align-items: center;
+    }
+
+    .clock {
+      width: 30rem;
+      height: 30rem;
+      border:20px solid white;
+      border-radius:50%;
+      margin:50px auto;
+      position: relative;
+      padding:2rem;
+      box-shadow:
+        0 0 0 4px rgba(0,0,0,0.1),
+        inset 0 0 0 3px #EFEFEF,
+        inset 0 0 10px black,
+        0 0 10px rgba(0,0,0,0.2);
+    }
+
+    .clock-face {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform: translateY(-3px); /* account for the height of the clock hands */
+    }
+
+    .hand {
+      width:50%;
+      height:6px;
+      background:black;
+      position: absolute;
+      top:50%;
+      transform-origin:100%;
+      transform:rotate(90deg);
+      transition:all 0.5s;
+      transition-timing-function:cubic-bezier(0.1, 2.7, 0.58, 1);
+    }
+
+    .second-hand{
+      background:red;
+      height:2px;
+    }
+    .hour-hand{
+      width:40%;
+      left:10%;
+    }
+
+  </style>
+
+  <script>
+
+  const second_hand = document.querySelector('.second-hand');
+  const minute_hand = document.querySelector('.min-hand');
+  const hour_hand = document.querySelector('.hour-hand');
+  
+  function setTime(){
+    const now = new Date();
+
+    const current_second = now.getSeconds();
+    const current_second_degree = ((current_second / 60) * 360) + 90; // this line checks how far through the 60 seconds we are and then multiplies it by 360 to represent in degrees. We add 90 as we initally changed the default position of the hands by 90 degrees so we have to add 90 to re-position the hand correctly
+    if(current_second_degree == 90){
+       second_hand.style.transition = 'none';
+     }else{
+       second_hand.style.transition = '';
+     }
+    second_hand.style.transform = `rotate(${current_second_degree}deg)`;
+
+    const current_minute = now.getMinutes();
+    const current_minute_degree = (current_minute + (current_second / 60)) / 60 * 360 + 90; // this line checks how far through the 60 minutes (for an hour) we are and then multiplies it by 360 to represent in degrees. We've added (current_second/  / 60) to our current minute calculation so our minute can keep track of how far through the current 60 seconds (which leads into the next minute) we are. This way our minute hand can be constantly updating throughout every 60 seconds bit by bit as opposed to only changing every minute. We add 90 as we initally changed the default position of the hands by 90 degrees so we have to add 90 to re-position the hand correctly
+    console.log(current_minute_degree);
+    minute_hand.style.transform = `rotate(${current_minute_degree}deg)`;
+
+    const current_hour = now.getHours();
+    const current_hour_degree = ((current_hour / 12) * 360) + 90; // this line checks how far through the 24 hours we are and then multiplies it by 360 to represent in degrees. Its 12 and not 24 as there's only 12 numbers on the clock. We add 90 as we initally changed the default position of the hands by 90 degrees so we have to add 90 to re-position the hand correctly
+    hour_hand.style.transform = `rotate(${current_hour_degree}deg)`;
+  }
+
+  setInterval(setTime, 1000);
+
+  </script>
+</body>
+</html>
