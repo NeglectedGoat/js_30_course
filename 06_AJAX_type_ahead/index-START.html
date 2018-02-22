@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Type Ahead 👀</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <form class="search-form">
+    <input type="text" class="search" placeholder="City or State">
+    <ul class="suggestions">
+      <li>Filter for a city</li>
+      <li>or a state</li>
+    </ul>
+  </form>
+<script>
+// STEPS INLVOLVED // 
+
+  // ------ GET DATA FROM MY URL AND STORE IT INTO MY CITIES ARRAY ------ //
+              //----- NEED TO CONVERT MY RAW DATA INTO JSON -------//
+
+  // ------ ONCE I'VE STORED MY DATA INTO MY ARRAY I NEED TO SET UP THE FILTER FUNCTIONALITY //
+          // ------ CHECK IF WHAT USER IS INPUTTING MATCHES ANY OF THE CITIES IN MY JSON FILE ------- //
+                  // -------- IF IT DOES MATCH THEN DISPLAY THAT DATA TO MY HTML PAGE -------- //
+
+
+const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+console.log(endpoint);
+
+const cities = [];
+
+fetch(endpoint)
+  .then(blob => blob.json())
+  .then(data => cities.push(...data))
+
+function findMatches(wordToMatch, cities){
+  return cities.filter(place => {
+    const regex = new RegExp(wordToMatch, 'gi');
+    return place.city.match(regex) || place.state.match(regex);
+  });
+}
+
+function displayMatches(){
+  const matchArray = findMatches(this.value, cities); // gives to me all the matches we have in our data 
+  // Once we have our matches as per above we then need to loop through each match and output it to our html page
+  // Old way would be for loop which I'm used to but with es6 we can use the map method
+  const html = matchArray.map(place =>{
+    return`
+      <li>
+          <span class="name">${place.city},${place.state}</span>
+          <span class="population">${place.population}</span>
+      </li>
+    `;
+  }).join('');
+  console.log(html);
+  suggestions.innerHTML = html;
+}
+
+const searchInput = document.querySelector('.search');
+const suggestions = document.querySelector('.suggestions');
+
+searchInput.addEventListener('change', displayMatches);
+searchInput.addEventListener('keyup', displayMatches);
+
+// fetch(endpoint);
+//   .then(function(blob){
+//     return blob.json();
+//   })
+//   .then(function(data){
+//     console.log(data);
+//   });
+</script>
+  </body>
+</html>
